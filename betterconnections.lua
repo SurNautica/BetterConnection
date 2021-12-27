@@ -1,8 +1,9 @@
+local BadgeService = game:GetService("BadgeService")
 local betterConnection = {Class = {}}
 betterConnection.Class.__index = betterConnection.Class
 
 -- constructors
-function betterConnection:Create(objectWithConnection, ...)
+function betterConnection:Create(objectWithConnection, ...) -- create a base manager
 	assert(objectWithConnection and objectWithConnection.Connect,"[BetterConnection]: invalid arg #1 for 'Create' must have a Connect function")
 	
 	local Arguments = {...}
@@ -24,7 +25,7 @@ function betterConnection:Create(objectWithConnection, ...)
 	connectionProperties = connectionProperties or {}
 	
 	assert(handlerFunction and typeof(handlerFunction) == "function","[BetterConnection]: invalid handlerFunction for 'Create'")
-	
+
 	local self = setmetatable({
 		_connections = {},
 		_values = {startTime = connectionProperties.LimitedTime and tick() or nil}
@@ -50,21 +51,39 @@ function betterConnection:Create(objectWithConnection, ...)
 				return self:Destroy()
 			end
 		end
+
+		-- check valid function
+		local validFunction = connectionProperties.ValidateFunction
+
+		if validFunction and typeof(validFunction) == "function" then
+			if not validFunction(...) then
+				return self:Destroy()
+			end
+		end
 		
 		return handlerFunction(...)
-	end
-
-	-- check valid function
-	local validFunction = connectionProperties.ValidateFunction
-
-	if validFunction and typeof(validFunction) == "function" then
-		if not validFunction(...) then
-			return self:Destroy()
-		end
 	end
 	
 	table.insert(self._connections,objectWithConnection:Connect(execute))
 	
+	return self
+end
+
+function betterConnection:CreateWorkspace() -- workspace!
+	local self = {_activeConnections = {}}
+
+	function self:Create(...)
+		local new = betterConnection:Create(...)
+		table.insert(self._activeConnections,new)
+		return new
+	end
+	function self:CleanUp()
+		for _,connection in pairs(self._activeConnections) do
+			connection:Destroy()
+		end
+	end	
+	self.Destroy = self.CleanUp
+
 	return self
 end
 
