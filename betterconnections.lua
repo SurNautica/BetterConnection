@@ -79,7 +79,7 @@ function betterConnection.Class:Destroy()
 		end
 	end
 	
-	return false,"destroyed"
+	return true,"destroyed"
 end
 betterConnection.Class.Disconnect = betterConnection.Class.Destroy
 
