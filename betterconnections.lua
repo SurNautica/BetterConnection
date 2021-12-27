@@ -53,6 +53,15 @@ function betterConnection:Create(objectWithConnection, ...)
 		
 		return handlerFunction(...)
 	end
+
+	-- check valid function
+	local validFunction = connectionProperties.ValidateFunction
+
+	if validFunction and typeof(validFunction) == "function" then
+		if not validFunction(...) then
+			return self:Destroy()
+		end
+	end
 	
 	table.insert(self._connections,objectWithConnection:Connect(execute))
 	
