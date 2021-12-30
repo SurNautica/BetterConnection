@@ -3,7 +3,7 @@ local betterConnection = {Class = {}}
 betterConnection.Class.__index = betterConnection.Class
 
 -- constructors
-function betterConnection:Create(objectWithConnection, ...) -- create a base manager
+function betterConnection:Connect(objectWithConnection, ...) -- create a base manager
 	assert(objectWithConnection and objectWithConnection.Connect,"[BetterConnection]: invalid arg #1 for 'Create' must have a Connect function")
 	
 	local Arguments = {...}
@@ -72,8 +72,8 @@ end
 function betterConnection:CreateWorkspace() -- workspace!
 	local self = {_activeConnections = {}}
 
-	function self:Create(...)
-		local new = betterConnection:Create(...)
+	function self:Connect(...)
+		local new = betterConnection:Connect(...)
 		table.insert(self._activeConnections,new)
 		return new
 	end
