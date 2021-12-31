@@ -1,10 +1,15 @@
 local BadgeService = game:GetService("BadgeService")
-local betterConnection = {Class = {}}
+local betterConnection = {Class = {},Debug = false,Version = "1.0"}
 betterConnection.Class.__index = betterConnection.Class
+
+-- private functions
+local function log(type, ...)
+	type("[BetterConnections]:", ...)
+end
 
 -- constructors
 function betterConnection:Connect(objectWithConnection, ...) -- create a base manager
-	assert(objectWithConnection and objectWithConnection.Connect,"[BetterConnection]: invalid arg #1 for 'Create' must have a Connect function")
+	assert(objectWithConnection and objectWithConnection.Connect,"[BetterConnections]: invalid arg #1 for 'Create' must have a Connect function")
 	
 	local Arguments = {...}
 	
@@ -24,7 +29,7 @@ function betterConnection:Connect(objectWithConnection, ...) -- create a base ma
 	
 	connectionProperties = connectionProperties or {}
 	
-	assert(handlerFunction and typeof(handlerFunction) == "function","[BetterConnection]: invalid handlerFunction for 'Create'")
+	assert(handlerFunction and typeof(handlerFunction) == "function","[BetterConnections]: invalid handlerFunction for 'Create'")
 
 	local self = setmetatable({
 		_connections = {},
@@ -87,6 +92,15 @@ function betterConnection:CreateWorkspace() -- workspace!
 	return self
 end
 
+-- global 
+function betterConnection:toggleDebug(toggle: boolean?)
+	if toggle == nil then
+		toggle = not betterConnection.Debug
+	end
+
+	betterConnection.Debug = toggle
+end
+
 -- class functions
 function betterConnection.Class:Destroy()
 	-- disconnect connections
@@ -97,9 +111,20 @@ function betterConnection.Class:Destroy()
 			end
 		end
 	end
+
+	if betterConnection.Debug then
+		log(print,"")
+	end
 	
 	return true,"destroyed"
 end
 betterConnection.Class.Disconnect = betterConnection.Class.Destroy
+
+do
+	if betterConnection.Debug then
+		log(print,"loaded bC version",betterConnection.Version)
+		--print("[BetterConnections]: loaded bC version",betterConnection.Version)
+	end
+end
 
 return betterConnection
