@@ -3,8 +3,16 @@ local betterConnection = {Class = {},Debug = false,Version = "1.0"}
 betterConnection.Class.__index = betterConnection.Class
 
 -- private functions
-local function log(type, ...)
+local function log(type, shouldIncludeDebug, ...)
+	if shouldIncludeDebug then
+		if not betterConnection.Debug then
+			return false,"debug not enabled"
+		end
+	end
 	type("[BetterConnections]:", ...)
+end
+local function disconnectTable(table)
+	
 end
 
 -- constructors
@@ -108,23 +116,16 @@ function betterConnection.Class:Destroy()
 		if typeof(connection) == "RBXScriptConnection" then
 			if not connection.Connected then
 				connection:Disconnect()
-			end
+			end 
 		end
 	end
-
-	if betterConnection.Debug then
-		log(print,"")
-	end
-	
+	log(print,true,"destoryed betterconnection")
 	return true,"destroyed"
 end
 betterConnection.Class.Disconnect = betterConnection.Class.Destroy
 
 do
-	if betterConnection.Debug then
-		log(print,"loaded bC version",betterConnection.Version)
-		--print("[BetterConnections]: loaded bC version",betterConnection.Version)
-	end
+	log(print,"loaded bC version",betterConnection.Version)
 end
 
 return betterConnection
