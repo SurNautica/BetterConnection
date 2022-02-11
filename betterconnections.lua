@@ -12,7 +12,15 @@ local function log(type, shouldIncludeDebug, ...)
 	type("[BetterConnections]:", ...)
 end
 local function disconnectTable(table)
-	
+	for _,connection in pairs(table) do
+		if typeof(connection) == "table" then
+			disconnectTable(connection)
+		elseif typeof(connection) == "RBXScriptConnection" then
+			if connection.Connected then
+				connection:Disconnect()
+			end
+		end
+	end
 end
 
 -- constructors
@@ -104,6 +112,7 @@ end
 function betterConnection:toggleDebug(toggle: boolean?)
 	if toggle == nil then
 		toggle = not betterConnection.Debug
+		return betterConnection.Debug
 	end
 
 	betterConnection.Debug = toggle
@@ -112,13 +121,7 @@ end
 -- class functions
 function betterConnection.Class:Destroy()
 	-- disconnect connections
-	for _,connection in pairs(self._connections) do
-		if typeof(connection) == "RBXScriptConnection" then
-			if not connection.Connected then
-				connection:Disconnect()
-			end 
-		end
-	end
+	disconnectTable(self._connections)
 	log(print,true,"destoryed betterconnection")
 	return true,"destroyed"
 end

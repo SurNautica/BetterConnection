@@ -1,0 +1,5 @@
+local functionName = "disable"
+
+local obj = {disable = function(self) print("function") end}
+
+obj[functionName]()
