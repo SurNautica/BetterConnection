@@ -1,5 +1,5 @@
 local BadgeService = game:GetService("BadgeService")
-local betterConnection = {Class = {},Debug = false,Version = "1.0"}
+local betterConnection = {Class = {},Debug = false,Version = "1.1"}
 betterConnection.Class.__index = betterConnection.Class
 
 -- private functions
